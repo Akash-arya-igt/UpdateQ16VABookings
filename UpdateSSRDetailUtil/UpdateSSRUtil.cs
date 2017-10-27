@@ -158,7 +158,7 @@ namespace UpdateSSRDetailUtil
                     string strRecloc = string.Empty;
 
                     XmlElement _pnrDoc = objQAction.ReadQueue(_objHAPDetail, _qNo, strSession);
-                    //XmlElement _pnrDoc = objQAction.ReadPNR (_objHAPDetail, "Q1F2BI", strSession);
+                    //XmlElement _pnrDoc = objQAction.ReadPNR (_objHAPDetail, "CMVMBK", strSession);
                     strRecloc = objPNRParse.GetReclocFromPNRXml(_pnrDoc);
 
                     while (qKnt > 0)
@@ -185,10 +185,9 @@ namespace UpdateSSRDetailUtil
                                     PnrDoc = _pnrDoc
                                 };
 
-                                try { _pnrDoc = objUpdateSSR.StartProcessing(out strOutResult); }
-                                catch(Exception ex) { NLogManager._instance.LogMsg(NLogLevel.Warn, strRecloc + ": " + ex.Message); }
+                                _pnrDoc = objUpdateSSR.StartProcessing(out strOutResult);
 
-                                if (!string.IsNullOrEmpty(strRecloc) || qKnt == 0)
+                                if (!string.IsNullOrEmpty(strRecloc))
                                 {
                                     if (strOutResult == ProcessResult.RemovedFromQ.ToString())
                                     {
@@ -202,7 +201,6 @@ namespace UpdateSSRDetailUtil
                                     }
                                 }
 
-                                string tempPNR = strRecloc;
                                 strRecloc = objPNRParse.GetReclocFromPNRXml(_pnrDoc);
 
                                 if(string.IsNullOrEmpty(strRecloc) && qKnt > 0)
@@ -231,9 +229,12 @@ namespace UpdateSSRDetailUtil
                             try
                             {
                                 _pnrDoc = objFareAction.Ignore(_objHAPDetail, strSession);
+                                strRecloc = objPNRParse.GetReclocFromPNRXml(_pnrDoc);
                             }
                             catch
                             {
+                                try { objQAction.CloseSession(_objHAPDetail, strSession); } catch { }
+
                                 strSession = objQAction.CreateSession(_objHAPDetail);
                                 _pnrDoc = objQAction.ReadQueue(_objHAPDetail, _qNo, strSession);
                                 strRecloc = objPNRParse.GetReclocFromPNRXml(_pnrDoc);

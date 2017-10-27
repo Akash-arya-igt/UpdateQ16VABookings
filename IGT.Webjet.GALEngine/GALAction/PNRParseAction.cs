@@ -186,7 +186,7 @@ namespace IGT.Webjet.GALEngine.GALAction
                 }
             }
 
-            return strPhoneNo;
+            return strPhoneNo.Replace(" ", "").Replace("-", "");
         }
 
     }

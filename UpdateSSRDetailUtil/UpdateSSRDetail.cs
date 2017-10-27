@@ -35,24 +35,35 @@ namespace UpdateSSRDetailUtil
                 string strEmail = string.Empty, strPhone = string.Empty;
                 strEmail = objPNRParse.GetEmail(_pnrDoc);
                 strPhone = objPNRParse.GetPhoneNo(_pnrDoc);
-                if (!string.IsNullOrEmpty(strEmail) && !string.IsNullOrEmpty(strPhone))
+                int intPhNo = 0;
+
+                if (int.TryParse(strPhone, out intPhNo))
                 {
-                    //Format email and phone no.
-                    strEmail = strEmail.Replace("@", @"//").Replace("_", "..").Replace("-", "./");
-                    strPhone = string.Concat("61", strPhone.StartsWith("0") ? strPhone.TrimStart('0') : strPhone).Replace(" ", "");
+                    if (!string.IsNullOrEmpty(strEmail) && !string.IsNullOrEmpty(strPhone))
+                    {
+                        //Format email and phone no.
+                        strEmail = strEmail.Replace("@", @"//").Replace("_", "..").Replace("-", "./");
+                        strPhone = string.Concat("61", strPhone.StartsWith("0") ? strPhone.TrimStart('0') : strPhone);
 
-                    //Update PNR detail
-                    objFareAction.UpdatePhoneEmailInSSR(HAPDetail, strEmail, strPhone, Session);
-                    _pnrDoc = objFareAction.EndTransactRetrieveNextPNR(HAPDetail, Session);
-                    //_pnrDoc = objFareAction.Ignore(HAPDetail, Session);
-                    EndStatus = ProcessResult.RemovedFromQ.ToString();
+                        //Update PNR detail
+                        objFareAction.UpdatePhoneEmailInSSR(HAPDetail, strEmail, strPhone, Session);
+                        _pnrDoc = objFareAction.EndTransactRetrieveNextPNR(HAPDetail, Session);
+                        //_pnrDoc = objFareAction.Ignore(HAPDetail, Session);
+                        EndStatus = ProcessResult.RemovedFromQ.ToString();
 
-                    NLogManager._instance.LogMsg(NLogLevel.Info, CurrentRecloc + ": " + EndStatus);
+                        NLogManager._instance.LogMsg(NLogLevel.Info, CurrentRecloc + ": " + EndStatus);
+                    }
+                    else
+                    {
+                        _pnrDoc = objFareAction.Ignore(HAPDetail, Session);
+                        EndStatus = ProcessResult.EmailOrPhoneNotFound.ToString();
+                        NLogManager._instance.LogMsg(NLogLevel.Info, CurrentRecloc + ": " + EndStatus);
+                    }
                 }
                 else
                 {
                     _pnrDoc = objFareAction.Ignore(HAPDetail, Session);
-                    EndStatus = ProcessResult.EmailOrPhoneNotFound.ToString();
+                    EndStatus = ProcessResult.PhoneNoInCorrectFormat.ToString();
                     NLogManager._instance.LogMsg(NLogLevel.Info, CurrentRecloc + ": " + EndStatus);
                 }
             }

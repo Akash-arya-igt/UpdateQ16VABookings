@@ -34,6 +34,7 @@ namespace IGT.Webjet.BusinessEntities
         NoActiveSegments,
         CarrierNotFound,
         EmailOrPhoneNotFound,
+        PhoneNoInCorrectFormat,
         RemovedFromQ
     }
 }

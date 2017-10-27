@@ -179,7 +179,7 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.btnStart);
             this.Name = "UpdateSSRUtil";
-            this.Text = "UpdateSSRUtil 4.0";
+            this.Text = "UpdateSSRUtil 4.1";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.UpdateSSRUtil_FormClosing);
             this.Load += new System.EventHandler(this.UpdateSSRUtil_Load);
             this.ResumeLayout(false);
