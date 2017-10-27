@@ -31,6 +31,7 @@ namespace IGT.Webjet.BusinessEntities
 
     public enum ProcessResult
     {
+        NoActiveSegments,
         CarrierNotFound,
         EmailOrPhoneNotFound,
         RemovedFromQ

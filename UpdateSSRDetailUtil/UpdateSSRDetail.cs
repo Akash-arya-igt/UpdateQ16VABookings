@@ -19,16 +19,17 @@ namespace UpdateSSRDetailUtil
 
         public XmlElement StartProcessing(out string EndStatus)
         {
+            XmlElement _pnrDoc = PnrDoc;
             FareAction objFareAction = new FareAction();
+            QueueAction objQAction = new QueueAction();
             PNRParseAction objPNRParse = new PNRParseAction();
 
             // Read PNR
-            XmlElement _pnrDoc = PnrDoc;
 
             var flghts = objPNRParse.GetFlightDetails(_pnrDoc);
             List<string> carrier = ConfigUtil.GetConfigValue("ValidCarrier", "VA").Split(',').Where(x => !string.IsNullOrEmpty(x)).ToList();
 
-            if (flghts.Any(x => carrier.Contains(x.CarrierCode)))
+            if (flghts.Any(x => carrier.Contains(x.CarrierCode) && x.DepartureTime.Date > DateTime.Now))
             {
                 // GET email and Phone no.
                 string strEmail = string.Empty, strPhone = string.Empty;
@@ -57,9 +58,17 @@ namespace UpdateSSRDetailUtil
             }
             else
             {
-                //ignore read next
-                _pnrDoc = objFareAction.Ignore(HAPDetail, Session);
-                EndStatus = ProcessResult.CarrierNotFound.ToString();
+                if (flghts.Any(x => carrier.Contains(x.CarrierCode)))
+                {
+                    _pnrDoc = objQAction.RemoveFromQ(HAPDetail, Session);
+                    EndStatus = ProcessResult.NoActiveSegments.ToString();
+                }
+                else
+                {
+                    _pnrDoc = objFareAction.Ignore(HAPDetail, Session);
+                    EndStatus = ProcessResult.CarrierNotFound.ToString();
+                }
+                
                 NLogManager._instance.LogMsg(NLogLevel.Info, CurrentRecloc + ": " + EndStatus);
             }
 

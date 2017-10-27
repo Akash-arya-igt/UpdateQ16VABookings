@@ -1,0 +1,8 @@
+﻿<QueueProcessing_2>
+  <QueueMods>
+    <QueueRemoveSignOutMods>
+      <Action>QR</Action>
+      <Recvd />
+    </QueueRemoveSignOutMods>
+  </QueueMods>
+</QueueProcessing_2>

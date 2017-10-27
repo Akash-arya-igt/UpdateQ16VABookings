@@ -409,7 +409,8 @@ namespace IGT.Webjet.GALEngine.GALAction
             XmlElement resp = objGwsConn.SubmitXmlOnSession(_pSession, reqTemplate.DocumentElement);
 
             List<string> lstError = GetError(resp);
-            if (lstError != null && lstError.Count > 0)
+
+            if ((lstError != null && lstError.Count > 0))
             {
                 lstError.Clear();
                 reqTemplate.RemoveChildIfExist("//RcvdFrom");
@@ -494,10 +495,15 @@ namespace IGT.Webjet.GALEngine.GALAction
         {
             string sErrorNodesPath = string.Empty;
 
-            if (responseDoc.GetStringChildNode("//TransactionErrorCode") != null
-                && responseDoc.GetStringChildNode("//PNRBFSecondaryBldChg") != null
-                && responseDoc.GetStringChildNode("//PNRBFSecondaryBldChg/Text") != null)
+            if (responseDoc.SelectSingleNode("//TransactionErrorCode") != null
+                && responseDoc.SelectSingleNode("//PNRBFSecondaryBldChg") != null
+                && responseDoc.SelectSingleNode("//PNRBFSecondaryBldChg/Text") != null)
                 sErrorNodesPath = responseDoc.GetStringChildNode("//PNRBFSecondaryBldChg/Text");
+            else if(responseDoc.SelectSingleNode("//TransactionErrorCode") != null
+                    && responseDoc.SelectSingleNode("//EndTransaction") != null
+                    && responseDoc.SelectSingleNode("//EndTransaction/EndTransactMessage") != null
+                    && responseDoc.SelectSingleNode("//EndTransaction/EndTransactMessage/Text") != null)
+                sErrorNodesPath = responseDoc.GetStringChildNode("//EndTransaction/EndTransactMessage/Text");
             return sErrorNodesPath;
         }
 

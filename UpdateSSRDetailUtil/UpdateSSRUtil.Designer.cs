@@ -39,6 +39,8 @@
             this.txtExceptionPNR = new System.Windows.Forms.TextBox();
             this.lblProcessedPNR = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.txtNoActiveSegPNR = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // btnStart
@@ -92,7 +94,7 @@
             // 
             this.progressBar1.Location = new System.Drawing.Point(15, 73);
             this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(414, 23);
+            this.progressBar1.Size = new System.Drawing.Size(580, 23);
             this.progressBar1.TabIndex = 5;
             // 
             // lblProcessedCount
@@ -115,7 +117,7 @@
             // 
             // txtExceptionPNR
             // 
-            this.txtExceptionPNR.Location = new System.Drawing.Point(236, 175);
+            this.txtExceptionPNR.Location = new System.Drawing.Point(405, 175);
             this.txtExceptionPNR.Multiline = true;
             this.txtExceptionPNR.Name = "txtExceptionPNR";
             this.txtExceptionPNR.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
@@ -134,17 +136,37 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(237, 159);
+            this.label3.Location = new System.Drawing.Point(406, 159);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(99, 13);
             this.label3.TabIndex = 10;
             this.label3.Text = "Exception PNR List";
             // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(209, 159);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(163, 13);
+            this.label2.TabIndex = 12;
+            this.label2.Text = "No Valid Seg Removed PNR List";
+            // 
+            // txtNoActiveSegPNR
+            // 
+            this.txtNoActiveSegPNR.Location = new System.Drawing.Point(209, 175);
+            this.txtNoActiveSegPNR.Multiline = true;
+            this.txtNoActiveSegPNR.Name = "txtNoActiveSegPNR";
+            this.txtNoActiveSegPNR.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.txtNoActiveSegPNR.Size = new System.Drawing.Size(190, 295);
+            this.txtNoActiveSegPNR.TabIndex = 11;
+            // 
             // UpdateSSRUtil
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(438, 482);
+            this.ClientSize = new System.Drawing.Size(608, 482);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.txtNoActiveSegPNR);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.lblProcessedPNR);
             this.Controls.Add(this.txtExceptionPNR);
@@ -157,7 +179,7 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.btnStart);
             this.Name = "UpdateSSRUtil";
-            this.Text = "UpdateSSRUtil 3.5";
+            this.Text = "UpdateSSRUtil 4.0";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.UpdateSSRUtil_FormClosing);
             this.Load += new System.EventHandler(this.UpdateSSRUtil_Load);
             this.ResumeLayout(false);
@@ -178,6 +200,8 @@
         private System.Windows.Forms.TextBox txtExceptionPNR;
         private System.Windows.Forms.Label lblProcessedPNR;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.TextBox txtNoActiveSegPNR;
     }
 }
 

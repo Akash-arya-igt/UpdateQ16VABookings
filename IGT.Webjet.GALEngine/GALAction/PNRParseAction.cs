@@ -110,7 +110,7 @@ namespace IGT.Webjet.GALEngine.GALAction
                         ArrivalTime = arrivalDate,
                         Source = startAirport,
                         Destination = endAirport,
-                        Status = status,
+                        Status = status, 
                         CarrierCode = airV,
                         FlightNumber = fltNum,
                         Class = bic,

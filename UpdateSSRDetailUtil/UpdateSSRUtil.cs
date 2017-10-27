@@ -1,31 +1,30 @@
-﻿using IGT.Webjet.BusinessEntities;
-using IGT.Webjet.CommonUtil;
-using IGT.Webjet.GALEngine.GALAction;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using System;
 using System.Xml;
+using System.Data;
+using System.Linq;
+using System.Windows.Forms;
+using IGT.Webjet.CommonUtil;
+using System.ComponentModel;
+using System.Collections.Generic;
+using IGT.Webjet.BusinessEntities;
+using IGT.Webjet.GALEngine.GALAction;
 
 namespace UpdateSSRDetailUtil
 {
     public partial class UpdateSSRUtil : Form
     {
-        GetHAPDetail _objHAPDetail;
-        BackgroundWorker _objWorker;
         int _qNo;
+        int _exceptions = 0;
         int _totalQCount = 0;
         int _scanPNRCount = 0;
         int _processedPNRCount = 0;
-        int _exceptions = 0;
+        int _NoActiveSegRemoveCount = 0;
+
+        GetHAPDetail _objHAPDetail;
+        BackgroundWorker _objWorker;
         List<string> _lstProcesedPNR = new List<string>();
         List<string> _lstExceptionPNR = new List<string>();
+        List<string> _lstNoActiveSegPNR = new List<string>();
 
         public UpdateSSRUtil()
         {
@@ -60,17 +59,24 @@ namespace UpdateSSRDetailUtil
 
         private void StartProcessing()
         {
-            _lstProcesedPNR.Clear();
-            _lstExceptionPNR.Clear();
-            txtProcessedPNR.Text = string.Empty;
-            txtExceptionPNR.Text = string.Empty;
-            lblStatus.Text = string.Empty;
-            lblProcessedCount.Text = string.Empty;
-            btnStart.Enabled = false;
-            btnCancel.Enabled = true;
-
-            // Kickoff the worker thread to begin it's DoWork function.
-            _objWorker.RunWorkerAsync();
+            try
+            {
+                _lstProcesedPNR.Clear();
+                _lstExceptionPNR.Clear();
+                _lstNoActiveSegPNR.Clear();
+                txtProcessedPNR.Text = string.Empty;
+                txtExceptionPNR.Text = string.Empty;
+                lblStatus.Text = string.Empty;
+                lblProcessedCount.Text = string.Empty;
+                btnStart.Enabled = false;
+                btnCancel.Enabled = true;
+                // Kickoff the worker thread to begin it's DoWork function.
+                _objWorker.RunWorkerAsync();
+            }
+            catch(Exception ex)
+            {
+                NLogManager._instance.LogMsg(NLogLevel.Error, ex.Message);
+            }
         }
 
         void m_oWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -104,15 +110,25 @@ namespace UpdateSSRDetailUtil
 
         void m_oWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            progressBar1.Value = e.ProgressPercentage;
-            lblStatus.Text = "Scanning (" + _scanPNRCount + "/" + _totalQCount + ")......." + progressBar1.Value.ToString() + "%";
-            lblProcessedCount.Text = "Processed: " + _processedPNRCount + ";        Exception Count: " + _exceptions;
+            try
+            {
+                progressBar1.Value = e.ProgressPercentage;
+                lblStatus.Text = "Scanning (" + _scanPNRCount + "/" + _totalQCount + ")......." + progressBar1.Value.ToString() + "%";
+                lblProcessedCount.Text = "Processed: " + _processedPNRCount + ";        No Active Seg Remove PNR Count: " + _NoActiveSegRemoveCount + ";        Exception Count: " + _exceptions;
 
-            if (_lstProcesedPNR != null && _lstProcesedPNR.Count > 0)
-                txtProcessedPNR.Text = string.Join(",", _lstProcesedPNR.Where(x => !string.IsNullOrEmpty(x)));
+                if (_lstProcesedPNR != null && _lstProcesedPNR.Count > 0)
+                    txtProcessedPNR.Text = string.Join(",", _lstProcesedPNR.Where(x => !string.IsNullOrEmpty(x)));
 
-            if (_lstExceptionPNR != null && _lstExceptionPNR.Count > 0)
-                txtExceptionPNR.Text = string.Join(",", _lstExceptionPNR.Where(x => !string.IsNullOrEmpty(x)));
+                if (_lstExceptionPNR != null && _lstExceptionPNR.Count > 0)
+                    txtExceptionPNR.Text = string.Join(",", _lstExceptionPNR.Where(x => !string.IsNullOrEmpty(x)));
+
+                if (_lstNoActiveSegPNR != null && _lstNoActiveSegPNR.Count > 0)
+                    txtNoActiveSegPNR.Text = string.Join(",", _lstNoActiveSegPNR.Where(x => !string.IsNullOrEmpty(x)));
+            }
+            catch(Exception ex)
+            {
+                NLogManager._instance.LogMsg(NLogLevel.Error, ex.Message);
+            }
         }
 
 
@@ -126,9 +142,11 @@ namespace UpdateSSRDetailUtil
             _totalQCount = 0;
             _scanPNRCount = 0;
             _processedPNRCount = 0;
+            _NoActiveSegRemoveCount = 0;
             _exceptions = 0;
             _lstProcesedPNR.Clear();
             _lstExceptionPNR.Clear();
+            _lstNoActiveSegPNR.Clear();
 
             try
             {
@@ -138,7 +156,9 @@ namespace UpdateSSRDetailUtil
                     _totalQCount = qKnt;
                     string strSession = objQAction.CreateSession(_objHAPDetail);
                     string strRecloc = string.Empty;
+
                     XmlElement _pnrDoc = objQAction.ReadQueue(_objHAPDetail, _qNo, strSession);
+                    //XmlElement _pnrDoc = objQAction.ReadPNR (_objHAPDetail, "Q1F2BI", strSession);
                     strRecloc = objPNRParse.GetReclocFromPNRXml(_pnrDoc);
 
                     while (qKnt > 0)
@@ -165,8 +185,8 @@ namespace UpdateSSRDetailUtil
                                     PnrDoc = _pnrDoc
                                 };
 
-                                _pnrDoc = objUpdateSSR.StartProcessing(out strOutResult);
-                                strRecloc = objPNRParse.GetReclocFromPNRXml(_pnrDoc);
+                                try { _pnrDoc = objUpdateSSR.StartProcessing(out strOutResult); }
+                                catch(Exception ex) { NLogManager._instance.LogMsg(NLogLevel.Warn, strRecloc + ": " + ex.Message); }
 
                                 if (!string.IsNullOrEmpty(strRecloc) || qKnt == 0)
                                 {
@@ -175,8 +195,15 @@ namespace UpdateSSRDetailUtil
                                         _processedPNRCount = _processedPNRCount + 1;
                                         _lstProcesedPNR.Add(strRecloc);
                                     }
-
+                                    else if (strOutResult == ProcessResult.NoActiveSegments.ToString())
+                                    {
+                                        _NoActiveSegRemoveCount = _NoActiveSegRemoveCount + 1;
+                                        _lstNoActiveSegPNR.Add(strRecloc);
+                                    }
                                 }
+
+                                string tempPNR = strRecloc;
+                                strRecloc = objPNRParse.GetReclocFromPNRXml(_pnrDoc);
 
                                 if(string.IsNullOrEmpty(strRecloc) && qKnt > 0)
                                 {
@@ -186,7 +213,6 @@ namespace UpdateSSRDetailUtil
                                     _pnrDoc = objQAction.ReadQueue(_objHAPDetail, _qNo, strSession);
                                     strRecloc = objPNRParse.GetReclocFromPNRXml(_pnrDoc);
                                 }
-
                             }
                             else
                                 break;
@@ -194,8 +220,10 @@ namespace UpdateSSRDetailUtil
                         catch(Exception ex)
                         {
                             _exceptions = _exceptions + 1;
+                            string tempRecloc = string.Empty;
+                            tempRecloc = strRecloc;
                             
-                            if(!string.IsNullOrEmpty(strRecloc))
+                            if (!string.IsNullOrEmpty(strRecloc))
                             {
                                 _lstExceptionPNR.Add(strRecloc);
                             }
@@ -210,7 +238,7 @@ namespace UpdateSSRDetailUtil
                                 _pnrDoc = objQAction.ReadQueue(_objHAPDetail, _qNo, strSession);
                                 strRecloc = objPNRParse.GetReclocFromPNRXml(_pnrDoc);
                             }
-                            NLogManager._instance.LogMsg(NLogLevel.Warn, ex.Message);
+                            NLogManager._instance.LogMsg(NLogLevel.Warn, tempRecloc + ": " + ex.Message);
                         }
                         _objWorker.ReportProgress((_scanPNRCount * 100) / _totalQCount);
                     }

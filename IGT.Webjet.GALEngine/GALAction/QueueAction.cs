@@ -11,7 +11,9 @@ namespace IGT.Webjet.GALEngine.GALAction
 {
     public class QueueAction
     {
+        private string _readPNR = "RetrieveExistingPNR.xml";
         private string _moveToQRequest = "PNRMoveToQueue.xml";
+        private string _removeFromQ = "QueueRemoveSignOut.xml";
         private string _queueProcessRequest = "QueueProcessing.xml";
 
 
@@ -72,6 +74,17 @@ namespace IGT.Webjet.GALEngine.GALAction
             return response;
         }
 
+        public XmlElement ReadPNR(GetHAPDetail _pHAP, string _pRecloc, string _pSession)
+        {
+            XmlDocument reqTemplate = XMLUtil.ReadTemplate(_readPNR);
+            reqTemplate.SetNodeTextIfExist("//RecLoc", _pRecloc);
+
+            GWSConn objGwsConn = new GWSConn(_pHAP);
+            XmlElement response = objGwsConn.SubmitXmlOnSession(_pSession, reqTemplate.DocumentElement);
+
+            return response;
+        }
+
         public string CreateSession(GetHAPDetail _pHAP)
         {
             GWSConn objGwsConn = new GWSConn(_pHAP);
@@ -121,6 +134,16 @@ namespace IGT.Webjet.GALEngine.GALAction
                 reqTemplate.RemoveChildIfExist("//PNRBFSecondaryBldChgMods");
                 response = objGwsConn.SubmitXmlOnSession(_pSession, reqTemplate.DocumentElement);
             }
+
+            return response;
+        }
+
+        public XmlElement RemoveFromQ(GetHAPDetail _pHAP, string _pSession)
+        {
+            XmlDocument reqTemplate = XMLUtil.ReadTemplate(_removeFromQ);
+
+            GWSConn objGwsConn = new GWSConn(_pHAP);
+            XmlElement response = objGwsConn.SubmitXmlOnSession(_pSession, reqTemplate.DocumentElement);
 
             return response;
         }
