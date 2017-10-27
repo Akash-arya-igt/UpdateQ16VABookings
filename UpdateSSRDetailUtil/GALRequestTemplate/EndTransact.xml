@@ -1,0 +1,8 @@
+<PNRBFManagement_33>
+	<EndTransactionMods>
+		<EndTransactRequest>
+			<ETInd>E</ETInd>
+			<RcvdFrom>UPDATESSRUTIL</RcvdFrom>
+		</EndTransactRequest>
+	</EndTransactionMods>
+</PNRBFManagement_33>

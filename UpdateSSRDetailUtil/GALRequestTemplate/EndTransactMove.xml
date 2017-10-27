@@ -1,0 +1,20 @@
+<!--USED in CCTUpload/doesn't support optional remarks. See similar MoveToQueue.xml that support Remarks-->
+<PNRBFManagement_7_12>
+  <EndTransactionMods>
+    <EndTransactRequest>
+      <ETInd>Q</ETInd>
+      <RcvdFrom>UPDATESSRUTIL</RcvdFrom>
+    </EndTransactRequest>
+    <GlobalAccessInfo>
+      <GlobAccessCRSAry>
+        <GlobAccessCRS>
+          <CRS>1G</CRS>
+          <PCC></PCC>
+          <QNum></QNum>
+          <QCat/>
+          <DtRange/>
+        </GlobAccessCRS>
+      </GlobAccessCRSAry>
+    </GlobalAccessInfo>
+  </EndTransactionMods>
+</PNRBFManagement_7_12>

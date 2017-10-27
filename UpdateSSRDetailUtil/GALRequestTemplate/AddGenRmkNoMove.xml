@@ -1,0 +1,23 @@
+<PNRBFManagement_33>
+	<PNRBFSecondaryBldChgMods>
+		<ItemAry>
+			<Item>
+				<DataBlkInd>G</DataBlkInd>
+				<GenRmkQual>
+					<EditTypeInd>A</EditTypeInd>
+					<AddQual>
+						<Qual1/>
+						<Qual2/>
+						<Rmk></Rmk>
+					</AddQual>
+				</GenRmkQual>
+			</Item>
+			<Item>
+				<DataBlkInd>E</DataBlkInd>
+				<EndQual>
+					<EndMark>E</EndMark>
+				</EndQual>
+			</Item>
+		</ItemAry>
+	</PNRBFSecondaryBldChgMods>
+</PNRBFManagement_33>

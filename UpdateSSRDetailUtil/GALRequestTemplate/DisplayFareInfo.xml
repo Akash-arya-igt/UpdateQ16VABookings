@@ -1,0 +1,14 @@
+<PNRBFManagement_33>
+  <PNRBFRetrieveMods>
+    <PNRAddr>
+      <FileAddr/>
+      <CodeCheck/>
+      <RecLoc></RecLoc>
+    </PNRAddr>
+  </PNRBFRetrieveMods>
+  <FareRedisplayMods>
+    <DisplayAction>
+      <Action>I</Action>
+    </DisplayAction>
+  </FareRedisplayMods>
+</PNRBFManagement_33>
